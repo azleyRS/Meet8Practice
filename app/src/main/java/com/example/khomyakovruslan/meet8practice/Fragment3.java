@@ -2,6 +2,9 @@ package com.example.khomyakovruslan.meet8practice;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,9 +20,12 @@ import android.view.ViewGroup;
 
 public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks<String>  {
     private static final int LOADER_ID = 10001;
+    private static final int SHOW_TEXT = 1001;
     private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
     private LinearLayoutManager mManager;
+    //h+l
+    Handler mHandler;
 
     private Loader<String> mLoader;
 
@@ -43,6 +49,20 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
         //mAdapter.addData("test");
         mRecyclerView.setAdapter(mAdapter);
 
+
+        //h+l
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what){
+                    case SHOW_TEXT:
+                        mAdapter.addData((String)msg.obj);
+                        break;
+                }
+            }
+        };
+
+
         mLoader = getActivity().getSupportLoaderManager().initLoader(LOADER_ID,new Bundle(),this);
         mLoader.forceLoad();
     }
@@ -61,9 +81,18 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
         //here you can addData
-        mAdapter.addData(data);
+        //mAdapter.addData(data);
+        showText(data);
         mAdapter.notifyItemInserted(MyLoader.count);
         mLoader.forceLoad();
+    }
+
+    //h+l
+    private void showText(String data) {
+        Message msg = new Message();
+        msg.what = SHOW_TEXT;
+        msg.obj = data;
+        mHandler.sendMessage(msg);
     }
 
     @Override
@@ -90,4 +119,5 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
             return "" + count++;
         }
     }
+
 }
