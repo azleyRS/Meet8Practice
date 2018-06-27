@@ -93,7 +93,7 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
         Message msg = new Message();
         msg.what = SHOW_TEXT;
         msg.obj = data;
-        mHandler.sendMessage(msg);
+        getUIHandler().sendMessage(msg);
     }
 
     @Override
@@ -141,6 +141,10 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
                     break;
             }
         }
+    }
+
+    private Handler getUIHandler(){
+        return mHandler;
     }
 
 }
