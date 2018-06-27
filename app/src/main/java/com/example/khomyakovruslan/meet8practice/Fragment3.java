@@ -39,35 +39,26 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView = view.findViewById(R.id.recycler_view);
-        mManager = new LinearLayoutManager(view.getContext());
-        mRecyclerView.setLayoutManager(mManager);
-
-        // here you can add List you need
+        initViews(view);
 
         mAdapter = new MyAdapter();
         //mAdapter.addData("test");
         mRecyclerView.setAdapter(mAdapter);
 
+        mHandler = new UIHandler();
+        initLoader();
 
-        //h+l
-/*        mHandler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what){
-                    case SHOW_TEXT:
-                        mAdapter.addData((String)msg.obj);
-                        break;
-                }
-            }
-        };*/
-        mHandler = new UIHandler(mAdapter);
+    }
 
-
+    private void initViews(View view) {
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mManager = new LinearLayoutManager(view.getContext());
+        mRecyclerView.setLayoutManager(mManager);
+    }
+    private void initLoader() {
         mLoader = getActivity().getSupportLoaderManager().initLoader(LOADER_ID,new Bundle(),this);
         mLoader.forceLoad();
     }
-
 
     @NonNull
     @Override
@@ -84,7 +75,6 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
         //here you can addData
         //mAdapter.addData(data);
         showText(data);
-        mAdapter.notifyItemInserted(MyLoader.count);
         mLoader.forceLoad();
     }
 
@@ -122,11 +112,9 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
     }
 
     //Handlerhere
-    public static class UIHandler extends Handler{
-        MyAdapter mMyAdapter;
-        public UIHandler(MyAdapter adapter){
+    public class UIHandler extends Handler{
+        public UIHandler(){
             super(Looper.getMainLooper());
-            mMyAdapter = adapter;
         }
 
         @Override
@@ -137,7 +125,8 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
         private void handleUIMessages(Message msg) {
             switch (msg.what){
                 case SHOW_TEXT:
-                    mMyAdapter.addData((String)msg.obj);
+                    mAdapter.addData((String)msg.obj);
+                    mAdapter.notifyItemInserted(MyLoader.count);
                     break;
             }
         }
