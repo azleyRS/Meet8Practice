@@ -51,7 +51,7 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
 
 
         //h+l
-        mHandler = new Handler(){
+/*        mHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what){
@@ -60,7 +60,8 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
                         break;
                 }
             }
-        };
+        };*/
+        mHandler = new UIHandler(mAdapter);
 
 
         mLoader = getActivity().getSupportLoaderManager().initLoader(LOADER_ID,new Bundle(),this);
@@ -117,6 +118,28 @@ public class Fragment3 extends Fragment implements LoaderManager.LoaderCallbacks
             }
             Log.d("TAG", "" + count);
             return "" + count++;
+        }
+    }
+
+    //Handlerhere
+    public static class UIHandler extends Handler{
+        MyAdapter mMyAdapter;
+        public UIHandler(MyAdapter adapter){
+            super(Looper.getMainLooper());
+            mMyAdapter = adapter;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            handleUIMessages(msg);
+        }
+
+        private void handleUIMessages(Message msg) {
+            switch (msg.what){
+                case SHOW_TEXT:
+                    mMyAdapter.addData((String)msg.obj);
+                    break;
+            }
         }
     }
 
